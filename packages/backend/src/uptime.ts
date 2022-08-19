@@ -1,5 +1,7 @@
+import assert from 'assert'
 import { ethers } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
+import fetch from 'node-fetch'
 
 interface Config {
   name: string
@@ -26,7 +28,7 @@ const optimism: Config = {
   wethAddress: '0x4200000000000000000000000000000000000006',
 }
 
-async function test({
+async function testChain({
   poolAddress,
   url,
   usdcAddress,
@@ -59,9 +61,22 @@ async function test({
   ])
 }
 
+async function testdYdX() {
+  console.log(`Testing dYdX`)
+  const response = await fetch('https://api.dydx.exchange/v3/trades/BTC-USD')
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const data = await response.json()
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+  const latestAt = new Date(data?.trades?.[0]?.createdAt)
+  assert(!isNaN(+latestAt), 'latest BTC-USD trade createdAt is not a date')
+  console.log(`BTC-USD latest trade was at ${latestAt.toUTCString()}`)
+  assert(Date.now() - +latestAt <= 60 * 60 * 1000)
+}
+
 async function main() {
-  await test(arbitrum)
-  await test(optimism)
+  await testChain(arbitrum)
+  await testChain(optimism)
+  await testdYdX()
 }
 
 main().catch(console.error)
