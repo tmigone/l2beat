@@ -20,8 +20,8 @@ export function getStagingConfig(): Config {
     transactionCountSync: {
       starkexApiUrl: getEnv('STARKEX_API_URL'),
       starkexApiKey: getEnv('STARKEX_API_KEY'),
-      arbitrumAlchemyApiKey: getEnv('ARBITRUM_ALCHEMY_API_KEY'),
-      optimismAlchemyApiKey: getEnv('OPTIMISM_ALCHEMY_API_KEY'),
+      arbitrumAlchemyApiKeys: getEnv.stringArray('ARBITRUM_ALCHEMY_API_KEYS'),
+      optimismAlchemyApiKeys: getEnv.stringArray('OPTIMISM_ALCHEMY_API_KEYS'),
       ethereumAlchemyApiKey: getEnv('ALCHEMY_API_KEY'),
       rpcWorkQueueLimit: 200_000,
       rpcWorkQueueWorkers: 100,

@@ -49,3 +49,14 @@ getEnv.boolean = function getBooleanFromEnv(
   }
   throw new Error(`Missing environment variable ${name}!`)
 }
+
+getEnv.stringArray = function getStringArrayFromEnv(
+  name: string,
+  delimiter = ','
+): string[] {
+  const value = process.env[name]
+  if (value !== undefined) {
+    return value.split(delimiter)
+  }
+  throw new Error(`Missing environment variable ${name}!`)
+}

@@ -8,7 +8,9 @@ import { TransactionCountSyncConfig } from '../config/Config'
 import { Clock } from '../core/Clock'
 import { RpcTransactionUpdater } from '../core/transaction-count/RpcTransactionUpdater'
 import { BlockTransactionCountRepository } from '../peripherals/database/BlockTransactionCountRepository'
+import { createMultiProvider } from '../peripherals/ethereum/createMultiProvider'
 import { EthereumClient } from '../peripherals/ethereum/EthereumClient'
+import { EthereumProvider } from '../peripherals/ethereum/types'
 import { assert } from '../tools/assert'
 
 export function createLayer2RpcTransactionUpdaters(
@@ -23,9 +25,9 @@ export function createLayer2RpcTransactionUpdaters(
   for (const project of config.projects) {
     if (project.transactionApi?.type === 'rpc') {
       const l2Provider = createL2Provider(
-        config.transactionCountSync,
         project.transactionApi,
         project.projectId,
+        config.transactionCountSync,
       )
 
       const ethereumClient = new EthereumClient(
@@ -79,27 +81,26 @@ export function createEthereumTransactionUpdater(
 }
 
 function createL2Provider(
-  config: TransactionCountSyncConfig,
   rpc: RpcTransactionApi,
   projectId: ProjectId,
-) {
-  if (rpc.provider === 'jsonRpc') {
-    return new providers.JsonRpcProvider({
-      url: rpc.url,
-      timeout: 10000,
-    })
+  config: TransactionCountSyncConfig,
+): EthereumProvider {
+  switch (rpc.provider) {
+    case 'alchemy':
+      return createMultiProvider(
+        (projectId === ProjectId('arbitrum')
+          ? config.arbitrumAlchemyApiKeys
+          : projectId === ProjectId('optimism')
+          ? config.optimismAlchemyApiKeys
+          : []
+        ).map((key) => new providers.AlchemyProvider(rpc.networkName, key)),
+      )
+    case 'jsonRpc':
+      return new providers.JsonRpcProvider({
+        url: rpc.url,
+        timeout: 10000,
+      })
+    default:
+      throw new Error('Unknown provider')
   }
-
-  let apiKey = ''
-  if (projectId === ProjectId('arbitrum')) {
-    apiKey = config.arbitrumAlchemyApiKey
-  }
-  if (projectId === ProjectId('optimism')) {
-    apiKey = config.optimismAlchemyApiKey
-  }
-  if (!apiKey) {
-    throw new Error('Please provide alchemy api key')
-  }
-
-  return new providers.AlchemyProvider(rpc.networkName, apiKey)
 }

@@ -31,8 +31,8 @@ export interface Config {
     | {
         starkexApiUrl: string
         starkexApiKey: string
-        arbitrumAlchemyApiKey: string
-        optimismAlchemyApiKey: string
+        arbitrumAlchemyApiKeys: string[]
+        optimismAlchemyApiKeys: string[]
         ethereumAlchemyApiKey: string
         rpcWorkQueueLimit: number
         rpcWorkQueueWorkers: number

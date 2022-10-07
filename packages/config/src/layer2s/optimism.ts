@@ -89,7 +89,7 @@ export const optimism: Layer2 = {
       type: 'rpc',
       provider: 'alchemy',
       networkName: 'optimism',
-      callsPerMinute: 1200,
+      callsPerMinute: 1200 * 12,
     },
   },
   riskView: {

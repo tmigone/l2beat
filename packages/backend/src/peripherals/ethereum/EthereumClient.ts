@@ -3,13 +3,13 @@ import { Bytes, EthereumAddress } from '@l2beat/types'
 import { providers } from 'ethers'
 
 import { RateLimitedProvider } from './RateLimitedProvider'
-import { BlockTag, CallParameters } from './types'
+import { BlockTag, CallParameters, EthereumProvider } from './types'
 
 export class EthereumClient {
   private readonly provider: RateLimitedProvider
 
   constructor(
-    provider: providers.Provider,
+    provider: EthereumProvider,
     private readonly logger: Logger,
     callsPerMinute = Infinity,
   ) {

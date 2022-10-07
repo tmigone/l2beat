@@ -102,7 +102,7 @@ export const arbitrum: Layer2 = {
       type: 'rpc',
       provider: 'alchemy',
       networkName: 'arbitrum',
-      callsPerMinute: 1200,
+      callsPerMinute: 1200 * 12,
       // We need to subtract the Nitro system transactions
       // after the block of the update
       assessCount: (count: number, blockNumber: number) =>

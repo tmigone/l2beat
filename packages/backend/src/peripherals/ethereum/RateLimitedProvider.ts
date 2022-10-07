@@ -1,6 +1,8 @@
 import { RateLimiter } from '@l2beat/common'
 import { providers } from 'ethers'
 
+import { EthereumProvider } from './types'
+
 export class RateLimitedProvider {
   private readonly rateLimiter: RateLimiter
   call: providers.Provider['call']
@@ -9,7 +11,7 @@ export class RateLimitedProvider {
   getLogs: providers.Provider['getLogs']
 
   constructor(
-    private readonly provider: providers.Provider,
+    private readonly provider: EthereumProvider,
     callsPerMinute: number,
   ) {
     this.rateLimiter = new RateLimiter({ callsPerMinute })
